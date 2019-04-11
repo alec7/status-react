@@ -179,7 +179,8 @@
   (log/debug :component view-id)
   (switch-navigator
    (into {}
-         [(build-screen (intro-login-stack/intro-login-stack view-id))
+         [(build-screen (intro-login-stack/login-stack view-id))
+          (build-screen (intro-login-stack/intro-stack))
           [:tabs-and-modals
            {:screen
             (stack-navigator
@@ -198,4 +199,6 @@
              {:mode              :modal
               :initialRouteName  :tabs
               :onTransitionStart (fn [])})}]])
-   {:initialRouteName :intro-login-stack}))
+   {:initialRouteName (if (= view-id :intro)
+                        :intro-stack
+                        :login-stack)}))
