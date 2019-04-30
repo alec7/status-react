@@ -117,7 +117,8 @@
    (let [{:keys [id method public-key to symbol amount-text on-result on-error
                  send-transaction-message?]}
          (get-in db [:wallet :send-transaction])
-         db' (assoc-in db [:wallet :send-transaction :in-progress?] false)]
+         db' (assoc-in db [:wallet :send-transaction :in-progress?] false)
+         screens-before (set (take 3 (:navigation-stack db)))]
      (if error
        ;; ERROR
        (models.wallet/handle-transaction-error (assoc cofx :db db') error)
@@ -143,9 +144,10 @@
                  #(when-not on-result
                     (navigation/navigate-to-clean
                      %
-                     (if (contains? #{:wallet-send-transaction :enter-pin :hardwallet-connect} (:view-id db))
-                       :wallet-transaction-sent
-                       :wallet-transaction-sent-modal)
+                     (if (or (contains? screens-before :wallet-send-modal-stack)
+                             (contains? screens-before :wallet-send-modal-stack-with-onboarding))
+                       :wallet-transaction-sent-modal
+                       :wallet-transaction-sent)
                      {})))))))
 
 (re-frame/reg-fx
