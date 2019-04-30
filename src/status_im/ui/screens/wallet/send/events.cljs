@@ -173,7 +173,8 @@
 (handlers/register-handler-fx
  ::hash-message-completed
  (fn [{:keys [db] :as cofx} [_ {:keys [result error]}]]
-   (let [db' (assoc-in db [:wallet :send-transaction :in-progress?] false)]
+   (let [view-id (:view-id db)
+         db' (assoc-in db [:wallet :send-transaction :in-progress?] false)]
      (if error
        ;; ERROR
        (models.wallet/handle-transaction-error (assoc cofx :db db') error)
@@ -182,7 +183,13 @@
                  {:db (-> db
                           (assoc-in [:hardwallet :pin :enter-step] :sign)
                           (assoc-in [:hardwallet :hash] result))}
-                 (navigation/navigate-to-cofx :enter-pin nil))))))
+                 (navigation/navigate-to-cofx
+                  (if (contains?
+                       #{:wallet-sign-message-modal :wallet-send-transaction-modal}
+                       view-id)
+                    :enter-pin-modal
+                    :enter-pin)
+                  nil))))))
 
 ;; DISCARD TRANSACTION
 (handlers/register-handler-fx
