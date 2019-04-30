@@ -238,6 +238,7 @@
   (let [{:keys [gas gas-price]} transaction
         {:keys [wallet-set-up-passed?]} (:account/account db)]
     {:db         (-> db
+                     (assoc-in [:navigation/screen-params :wallet-send-modal-stack :modal?] true)
                      (assoc-in [:wallet :send-transaction] transaction)
                      (assoc-in [:wallet :send-transaction :original-gas] gas))
      :dispatch-n [[:update-wallet]
@@ -257,6 +258,7 @@
                         :wallet-send-modal-stack-with-onboarding)]
     (fx/merge cofx
               (cond-> {:db (-> db
+                               (assoc-in [:navigation/screen-params :wallet-send-modal-stack :modal?] true)
                                (assoc-in [:wallet :send-transaction]
                                          transaction)
                                (assoc-in [:wallet :send-transaction :original-gas]

@@ -308,6 +308,7 @@
                                       :wallet-send-modal-stack-with-onboarding)]
       (fx/merge cofx
                 {:db (-> db
+                         (assoc-in [:navigation/screen-params :wallet-send-modal-stack :modal?] true)
                          (update-in [:wallet :send-transaction]
                                     assoc
                                     :amount (money/formatted->internal value symbol decimals)

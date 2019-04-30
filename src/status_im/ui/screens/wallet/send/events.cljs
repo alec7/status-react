@@ -118,11 +118,7 @@
                  send-transaction-message?]}
          (get-in db [:wallet :send-transaction])
          db' (assoc-in db [:wallet :send-transaction :in-progress?] false)
-         ; NOTE: we check last 3 screens to understand if wallet modal screen was used
-         ; (not just last one, we need to account for 'Enter PIN' and 'Keycard connect' screens)
-         screens-before (set (take 3 (:navigation-stack db)))
-         modal-screen-was-used? (or (contains? screens-before :wallet-send-modal-stack)
-                                    (contains? screens-before :wallet-send-modal-stack-with-onboarding))]
+         modal-screen-was-used? (get-in db [:navigation/screen-params :wallet-send-modal-stack :modal?])]
      (if error
        ;; ERROR
        (models.wallet/handle-transaction-error (assoc cofx :db db') error)
@@ -432,3 +428,10 @@
                                                              screen-params
                                                              (types/json->clj %)
                                                              password-error-cb])}})))))
+
+(handlers/register-handler-fx
+ :wallet.ui/send-transaction-button-clicked
+ (fn [{:keys [db] :as cofx} _]
+   (fx/merge cofx
+             {:db (assoc-in db [:navigation/screen-params :wallet-send-modal-stack :modal?] false)}
+             (navigation/navigate-to-cofx :wallet-send-transaction nil))))
