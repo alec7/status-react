@@ -276,3 +276,7 @@
                         :edit?         false}))
               (update-wallet)
               (navigation/navigate-to-cofx go-to-view-id {}))))
+
+(defn send-transaction-screen-did-load
+  [{:keys [db]}]
+  {:db (assoc-in db [:navigation/screen-params :wallet-send-modal-stack :modal?] false)})

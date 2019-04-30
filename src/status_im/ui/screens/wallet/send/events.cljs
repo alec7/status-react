@@ -429,9 +429,3 @@
                                                              (types/json->clj %)
                                                              password-error-cb])}})))))
 
-(handlers/register-handler-fx
- :wallet.ui/send-transaction-button-clicked
- (fn [{:keys [db] :as cofx} _]
-   (fx/merge cofx
-             {:db (assoc-in db [:navigation/screen-params :wallet-send-modal-stack :modal?] false)}
-             (navigation/navigate-to-cofx :wallet-send-transaction nil))))
