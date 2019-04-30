@@ -42,10 +42,8 @@
 
 (fx/defn navigate-back-button-clicked
   [{:keys [db] :as cofx}]
-  (let [screen-before (second (get db :navigation-stack))
-        navigate-to-browser? (contains? #{:wallet-sign-message-modal
-                                          :wallet-send-transaction-modal
-                                          :wallet-send-modal-stack} screen-before)]
+  (let [screen-before (set (take 4 (:navigation-stack db)))
+        navigate-to-browser? (contains? screen-before :browser-stack)]
     (if navigate-to-browser?
       (fx/merge cofx
                 {:db (assoc-in db [:hardwallet :on-card-connected] nil)}
