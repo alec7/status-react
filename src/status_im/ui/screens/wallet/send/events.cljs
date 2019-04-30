@@ -185,7 +185,7 @@
                           (assoc-in [:hardwallet :hash] result))}
                  (navigation/navigate-to-cofx
                   (if (contains?
-                       #{:wallet-sign-message-modal :wallet-send-transaction-modal}
+                       #{:wallet-sign-message-modal :wallet-send-transaction-modal :wallet-send-modal-stack}
                        view-id)
                     :enter-pin-modal
                     :enter-pin)
@@ -390,7 +390,13 @@
                         (assoc-in [:hardwallet :pin :enter-step] :sign)
                         (assoc-in [:hardwallet :transaction] transaction)
                         (assoc-in [:hardwallet :hash] hash))}
-               (navigation/navigate-to-clean :enter-pin nil)))))
+               (navigation/navigate-to-clean
+                (if (contains?
+                     #{:wallet-sign-message-modal :wallet-send-transaction-modal :wallet-send-modal-stack}
+                     (:view-id db))
+                  :enter-pin-modal
+                  :enter-pin)
+                nil)))))
 
 (handlers/register-handler-fx
  :wallet.ui/sign-transaction-button-clicked
