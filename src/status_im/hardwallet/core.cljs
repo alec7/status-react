@@ -785,7 +785,11 @@
       (get-application-info cofx pairing :hardwallet/sign)
       (fx/merge cofx
                 {:db (assoc-in db [:hardwallet :on-card-connected] :hardwallet/prepare-to-sign)}
-                (navigation/navigate-to-cofx :hardwallet-connect nil)))))
+                (navigation/navigate-to-cofx
+                 (if (= (:view-id db) :enter-pin-modal)
+                   :hardwallet-connect-modal
+                   :hardwallet-connect)
+                 nil)))))
 
 ; PIN enter steps:
 ; login - PIN is used to login

@@ -5,7 +5,7 @@
     :screens [:wallet-send-transaction-modal
               :wallet-transaction-sent-modal
               :wallet-transaction-fee
-              :hardwallet-connect
+              :hardwallet-connect-modal
               :enter-pin-modal]
     :config  {:initialRouteName :wallet-send-transaction-modal}}
    {:name    :wallet-send-modal-stack-with-onboarding
@@ -13,7 +13,7 @@
               :wallet-send-transaction-modal
               :wallet-transaction-sent-modal
               :wallet-transaction-fee
-              :hardwallet-connect
+              :hardwallet-connect-modal
               :enter-pin-modal]
     :config  {:initialRouteName :wallet-onboarding-setup-modal}}
    :chat-modal
@@ -21,6 +21,7 @@
    :stickers-pack-modal
    :wallet-sign-message-modal
    :enter-pin-modal
+   :hardwallet-connect-modal
    :selection-modal-screen
    :wallet-settings-assets
    :wallet-transaction-fee
