@@ -1306,6 +1306,16 @@
    (hardwallet/pair cofx)))
 
 (handlers/register-handler-fx
+ :hardwallet/verify-pin
+ (fn [cofx _]
+   (hardwallet/verify-pin cofx)))
+
+(handlers/register-handler-fx
+ :hardwallet/change-pin
+ (fn [cofx _]
+   (hardwallet/change-pin cofx)))
+
+(handlers/register-handler-fx
  :hardwallet.ui/success-button-pressed
  (fn [cofx _]
    (hardwallet/success-button-pressed cofx)))
