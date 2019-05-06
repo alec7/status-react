@@ -754,7 +754,6 @@
   (let [pin (vector->string (get-in cofx [:db :hardwallet :pin :current]))
         pairing (get-pairing db)
         card-connected? (get-in db [:hardwallet :card-connected?])]
-    (prn pin pairing)
     (if card-connected?
       {:db                    (assoc-in db [:hardwallet :pin :status] :verifying)
        :hardwallet/verify-pin {:pin     pin
@@ -1116,13 +1115,19 @@
 
 (fx/defn card-ready-next-button-pressed
   [{:keys [db] :as cofx}]
-  (fx/merge cofx
-            {:db (-> db
-                     (assoc-in [:hardwallet :setup-step] :pin)
-                     (assoc-in [:hardwallet :pin :enter-step] :current)
-                     (assoc-in [:hardwallet :pin :on-verified] :hardwallet/proceed-to-generate-mnemonic)
-                     (assoc-in [:hardwallet :pin :current] [])
-                     (assoc-in [:hardwallet :pin :original] nil))}))
+  (let [pin (get-in db [:hardwallet :secrets :pin])
+        pin-already-set? (boolean pin)]
+    (if pin-already-set?
+      (if (= (get-in db [:hardwallet :flow]) :create)
+        (load-generating-mnemonic-screen cofx)
+        {:db (assoc-in db [:hardwallet :setup-step] :recovery-phrase)})
+      (fx/merge cofx
+                {:db (-> db
+                         (assoc-in [:hardwallet :setup-step] :pin)
+                         (assoc-in [:hardwallet :pin :enter-step] :current)
+                         (assoc-in [:hardwallet :pin :on-verified] :hardwallet/proceed-to-generate-mnemonic)
+                         (assoc-in [:hardwallet :pin :current] [])
+                         (assoc-in [:hardwallet :pin :original] nil))}))))
 
 (fx/defn proceed-to-generate-mnemonic
   [{:keys [db] :as cofx}]
@@ -1141,14 +1146,12 @@
 
 (fx/defn generate-and-load-key
   [{:keys [db] :as cofx}]
-  (let [{:keys [mnemonic pairing]} (get-in db [:hardwallet :secrets])
-        pin (vector->string (or
-                             (get-in db [:hardwallet :pin :current])
-                             (get-in db [:hardwallet :pin :original])))]
+  (let [{:keys [mnemonic pairing pin]} (get-in db [:hardwallet :secrets])
+        pin' (or pin (vector->string (get-in db [:hardwallet :pin :current])))]
     (fx/merge cofx
               {:hardwallet/generate-and-load-key {:mnemonic mnemonic
                                                   :pairing  pairing
-                                                  :pin      pin}})))
+                                                  :pin      pin'}})))
 
 (fx/defn create-keycard-account
   [{:keys [db] :as cofx}]
